@@ -1260,44 +1260,225 @@
         let currentLang = 'en';
 
         const sampleProjects = [
-            {
-                id: 1,
-                title: 'Uprix Assistant',
-                description: 'This software helps you organize, search, and run your installed programs quickly with a clean and animated UI.',
-                type: 'desktop',
-                author: 'Mehran Ghadirian',
-                date: '2025-03-15',
-                languages: ['csharp', 'cpp'],
-                github: 'https://github.com/MehranQadirian/Uprix-Application'
-            },
-            {
-                id: 2,
-                title: 'DWD Downloader Tools',
-                description: 'DWD is a powerful, feature-rich download manager for Linux, written in Python. It supports downloading regular files (e.g., MP3s) and YouTube videos with a sleek, colorful interface, advanced features, and unmatched flexibility. Whether you\'re downloading a single file or managing a queue of downloads, DWD has you covered!',
-                type: 'tool',
-                author: 'Mehran Ghadirian',
-                date: '2025-02-20',
-                languages: ['python'],
-                github: 'https://github.com/MehranQadirian/dwd-download-manager'
-            }
-        ];
+    {
+        id: 12,
+        title: 'Vibe Merge - (Vibe Coding)',
+        description: 'VibeMerge merges multiple text files from a project directory into a single concatenated file for AI coding agents. Useful for preparing codebases without integrated tools.',
+        type: 'tool',
+        author: 'Nima Naseri',
+        date: '2025-01-15',
+        languages: ['python'],
+        github: 'https://github.com/naseridev/vibemerge'
+    },
+    {
+        id: 5,
+        title: 'Different Tree Traversal Algorithms',
+        description: 'C# project implementing Preorder, Inorder, Postorder tree traversals. Includes classes for tree building, node management, and traversal methods.',
+        type: 'desktop',
+        author: 'Mehran Ghadirian',
+        date: '2025-01-22',
+        languages: ['csharp'],
+        github: 'https://github.com/MehranQadirian/OrdersTypes'
+    },
+    {
+        id: 20,
+        title: 'Lorentz',
+        description: 'Modern interface for decentralized social networks using Next.js, Tailwind CSS, and Hexa UI. Interactive prototype demonstrating decentralized interactions.',
+        type: 'web',
+        author: 'Nima Naseri',
+        date: '2025-01-30',
+        languages: ['typescript', 'javascript', 'css'],
+        github: 'https://github.com/naseridev/lorentz'
+    },
+    {
+        id: 1,
+        title: 'Uprix Assistant',
+        description: 'Software to organize, search, and run installed programs quickly with clean and animated UI.',
+        type: 'desktop',
+        author: 'Mehran Ghadirian',
+        date: '2025-02-05',
+        languages: ['csharp', 'cpp'],
+        github: 'https://github.com/MehranQadirian/Uprix-Application'
+    },
+    {
+        id: 19,
+        title: 'Prism',
+        description: 'Web app for creating or joining temporary, secure chat rooms with end-to-end encryption.',
+        type: 'web',
+        author: 'Nima Naseri',
+        date: '2025-02-12',
+        languages: ['typescript', 'javascript', 'css'],
+        github: 'https://github.com/naseridev/prism'
+    },
+    {
+        id: 7,
+        title: 'In & Post & Pre -FIX Graphical Convertor',
+        description: 'Graphical tool in Windows Forms for converting between infix, postfix, and prefix mathematical expressions. Includes error handling and simple UI.',
+        type: 'desktop',
+        author: 'Mehran Ghadirian',
+        date: '2025-02-18',
+        languages: ['csharp', 'cpp'],
+        github: 'https://github.com/MehranQadirian/Infix-Postfix-Prefix-Graphical-Convertor-WindowsForm-CSharp'
+    },
+    {
+        id: 15,
+        title: 'Enigma',
+        description: 'Simulation of the Enigma machine from WWII, demonstrating cryptographic mechanisms for educational and historical purposes.',
+        type: 'tool',
+        author: 'Nima Naseri',
+        date: '2025-02-20',
+        languages: ['rust'],
+        github: 'https://github.com/MehranQadirian/dwd-download-manager'
+    },
+    {
+        id: 6,
+        title: 'Tank Shooter Game',
+        description: 'Tank war game where the player controls a tank through obstacles and enemies. Implements movement, shooting, collisions, and life management.',
+        type: 'desktop',
+        author: 'Mehran Ghadirian',
+        date: '2025-02-23',
+        languages: ['csharp'],
+        github: 'https://github.com/MehranQadirian/TankGame'
+    },
+    {
+        id: 18,
+        title: 'UDP Load Testing Tool (UdpNull)',
+        description: 'High-performance UDP load testing tool for academic research and network analysis.',
+        type: 'tool',
+        author: 'Nima Naseri',
+        date: '2025-02-26',
+        languages: ['rust'],
+        github: 'https://github.com/naseridev/udpnull'
+    },
+    {
+        id: 3,
+        title: 'Algorithm Design',
+        description: 'Collection of algorithm exercises in Console App & WinForm: Haffman, Prim/Kruskal, Sum of Subsets, Graph Coloring, TSP, and more.',
+        type: 'desktop',
+        author: 'Mehran Ghadirian',
+        date: '2025-02-28',
+        languages: ['csharp'],
+        github: 'https://github.com/MehranQadirian/AlgorithmDesign'
+    },
+    {
+        id: 8,
+        title: 'List of Students',
+        description: 'Desktop app to manage student info: add, edit, delete, signup/login. Simple GUI for learning CRUD and authentication concepts.',
+        type: 'desktop',
+        author: 'Mehran Ghadirian',
+        date: '2025-03-03',
+        languages: ['csharp'],
+        github: 'https://github.com/MehranQadirian/ListOfStudents'
+    },
+    {
+        id: 14,
+        title: 'Conway\'s',
+        description: 'Implementation of Conway\'s Game of Life using Rust, demonstrating cellular automata and discrete dynamical systems.',
+        type: 'tool',
+        author: 'Nima Naseri',
+        date: '2025-03-06',
+        languages: ['rust'],
+        github: 'https://github.com/naseridev/rust-life'
+    },
+    {
+        id: 4,
+        title: 'Red Square Escape Game',
+        description: '2D game where player navigates a red square through obstacles and traps. Puzzle + platformer over ~60 levels.',
+        type: 'desktop',
+        author: 'Mehran Ghadirian',
+        date: '2025-03-08',
+        languages: ['csharp'],
+        github: 'https://github.com/MehranQadirian/RedSquareEscape'
+    },
+    {
+        id: 11,
+        title: 'Cortex - (Password Manager)',
+        description: 'CLI password manager with ChaCha20-Poly1305 encryption and hardware fingerprinting for secure passwords.',
+        type: 'tool',
+        author: 'Nima Naseri',
+        date: '2025-03-10',
+        languages: ['rust'],
+        github: 'https://github.com/naseridev/cortex'
+    },
+    {
+        id: 17,
+        title: 'Tunnelbreach - SSH Honeypot',
+        description: 'Python-based SSH honeypot for cybersecurity research and educational purposes.',
+        type: 'tool',
+        author: 'Nima Naseri',
+        date: '2025-03-12',
+        languages: ['python'],
+        github: 'https://github.com/naseridev/tunnel-breach'
+    },
+    {
+        id: 2,
+        title: 'DWD Downloader Tools',
+        description: 'Python download manager for Linux. Handles MP3s, YouTube videos, single files or queues, with a colorful interface.',
+        type: 'tool',
+        author: 'Mehran Ghadirian',
+        date: '2025-03-14',
+        languages: ['python'],
+        github: 'https://github.com/MehranQadirian/dwd-download-manager'
+    },
+    {
+        id: 16,
+        title: 'Magnet',
+        description: 'Rust-based parallel GitHub repository scraper using async for large-scale, fault-tolerant repo collection.',
+        type: 'tool',
+        author: 'Nima Naseri',
+        date: '2025-03-16',
+        languages: ['rust'],
+        github: 'https://github.com/naseridev/magnet'
+    },
+    {
+        id: 9,
+        title: 'Guess Number Game GUI',
+        description: 'Interactive number guessing game with GUI: hints, player info, score management. Ends when player guesses correctly or exits.',
+        type: 'desktop',
+        author: 'Mehran Ghadirian',
+        date: '2025-03-18',
+        languages: ['csharp'],
+        github: 'https://github.com/MehranQadirian/Guess-Number-Game-GUI.git'
+    },
+    {
+        id: 10,
+        title: 'DWD Downloader Tools',
+        description: 'Python download manager for Linux (duplicate project), supports multiple file types and queue management.',
+        type: 'tool',
+        author: 'Mehran Ghadirian',
+        date: '2025-03-20',
+        languages: ['python'],
+        github: 'https://github.com/MehranQadirian/dwd-download-manager'
+    },
+    {
+        id: 13,
+        title: 'Notch',
+        description: 'Q-Learning agent in 2D grid with obstacles. Builds Q-table, demonstrates reinforcement learning concepts.',
+        type: 'tool',
+        author: 'Nima Naseri',
+        date: '2025-03-22',
+        languages: ['rust'],
+        github: 'https://github.com/naseridev/notch'
+    }
+];
 
-        const sampleUsers = [
-            {
-                name: 'Mehran Ghadirian',
-                bio: 'Desktop application developer specializing in .NET and cross-platform technologies.',
-                github: 'https://github.com/mehranqadirian',
-                email: 'mehranghadirian01@gmail.com',
-                location: 'Iran'
-            },
-            {
-                name: 'Nima Naseri',
-                bio: 'Full-stack developer passionate about creating elegant solutions to complex problems. Specializing in web development and AI/ML.',
-                github: 'https://github.com/naseridev',
-                email: 'nima@example.com',
-                location: 'Iran'
-            }
-        ];
+const sampleUsers = [
+    {
+        name: 'Mehran Ghadirian',
+        bio: 'Desktop developer skilled in C#, C++, and Python. Experienced in Windows Forms, algorithm visualization, game development, and creating Telegram bots. Developed various tools, desktop apps, and games.',
+        github: 'https://github.com/mehranqadirian',
+        email: 'https://www.linkedin.com/in/mehran-ghadirian-37b421333',
+        location: 'Iran'
+    },
+    {
+        name: 'Nima Naseri',
+        bio: 'Full-stack developer specializing in web apps, AI/ML tools, and Rust systems. Proficient in TypeScript, JavaScript, Python, CSS, and Rust. Works on secure systems, web applications, and automation tools.',
+        github: 'https://github.com/naseridev',
+        email: 'https://linkedin.com/in/naseridev/',
+        location: 'Iran'
+    }
+];
+
 
         async function init() {
             try {
