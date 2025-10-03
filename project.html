@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Project - Projects View</title>
+  <meta name="description" content="Project details - Projects View" />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
@@ -13,15 +14,15 @@
     <div class="container header-inner">
       <div class="brand"><h1 id="logo">Projects View</h1></div>
       <div class="controls">
-        <a href="index.html" class="btn">← Back</a>
+        <a href="index.html" class="btn" data-i18n="back">← Back</a>
       </div>
     </div>
   </header>
 
   <main class="container project-page">
-    <article id="projectArticle" class="project-article">
+    <article id="projectArticle" class="project-article" aria-live="polite">
       <!-- header image -->
-      <div id="projectHero" class="project-hero">📦</div>
+      <div id="projectHero" class="project-hero" role="img" aria-label="Project image">📦</div>
       <div class="project-content">
         <h1 id="projTitle"></h1>
         <div class="proj-meta">
@@ -29,7 +30,7 @@
         </div>
         <p id="projDesc"></p>
         <div class="proj-actions">
-          <a id="openGithub" class="btn" target="_blank">Open on GitHub</a>
+          <a id="openGithub" class="btn" target="_blank" rel="noopener noreferrer" data-i18n="open_github">Open on GitHub</a>
         </div>
       </div>
     </article>
@@ -57,12 +58,13 @@
       document.getElementById('openGithub').href = project.url || '#';
 
       const hero = document.getElementById('projectHero');
-      const img = pickImageForProject(project);
-      hero.innerHTML = img;
+      // use pickImageForProject which returns an <img> element string
+      hero.innerHTML = pickImageForProject(project);
     }
 
     init();
   </script>
   <script type="module" src="assets/js/bgCanvas.js"></script>
+  <script type="module" src="assets/js/i18n.js"></script>
 </body>
 </html>
