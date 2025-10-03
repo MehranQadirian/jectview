@@ -1,0 +1,40 @@
+[
+  {
+    "id": "p1",
+    "title": "Portfolio Website",
+    "description": "A responsive portfolio made with HTML, CSS and JS.",
+    "type": "web",
+    "languages": [
+      "html",
+      "css",
+      "js"
+    ],
+    "date": "2024-05-10",
+    "author": "Mehran",
+    "url": "https://github.com/mehranqadirian/portfolio"
+  },
+  {
+    "id": "p2",
+    "title": "Task Manager",
+    "description": "Desktop task manager written in C# with a nice UI.",
+    "type": "desktop",
+    "languages": [
+      "csharp"
+    ],
+    "date": "2023-12-01",
+    "author": "Nima",
+    "url": "https://github.com/naseridev/task-manager"
+  },
+  {
+    "id": "p3",
+    "title": "Blog Engine",
+    "description": "Backend blog engine using PHP and MySQL.",
+    "type": "backend",
+    "languages": [
+      "php"
+    ],
+    "date": "2024-01-20",
+    "author": "Mehran",
+    "url": "https://github.com/mehranqadirian/blog-engine"
+  }
+]
