@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project View</title>
+    <title>Project Showcase</title>
     <style>
         * {
             margin: 0;
@@ -232,7 +232,7 @@
 
         .project-card {
             border-radius: 15px;
-            padding: 25px;
+            overflow: hidden;
             transition: transform 0.3s, box-shadow 0.3s;
             cursor: pointer;
             border: 2px solid transparent;
@@ -254,6 +254,22 @@
             border-color: var(--primary-cyan);
         }
 
+        .project-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .project-content {
+            padding: 20px;
+        }
+
         .project-header {
             display: flex;
             justify-content: space-between;
@@ -262,7 +278,7 @@
         }
 
         .project-title {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: bold;
             color: var(--primary-cyan);
             margin-bottom: 5px;
@@ -287,13 +303,17 @@
             margin: 15px 0;
             line-height: 1.6;
             opacity: 0.9;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .project-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 20px;
+            margin-top: 15px;
             padding-top: 15px;
             border-top: 1px solid;
         }
@@ -314,6 +334,165 @@
         .project-date {
             font-size: 14px;
             opacity: 0.7;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            max-width: 800px;
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        .light-theme .modal-content {
+            background: var(--white);
+        }
+
+        .dark-theme .modal-content {
+            background: linear-gradient(135deg, var(--blue-darker) 0%, var(--purple-dark) 100%);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            font-size: 24px;
+            color: var(--white);
+            cursor: pointer;
+            z-index: 10;
+            transition: 0.3s;
+        }
+
+        .modal-close:hover {
+            background: var(--primary-red);
+            transform: rotate(90deg);
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 120px;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, var(--primary-red), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-type {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .modal-description {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+
+        .modal-author-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        .light-theme .modal-author-info {
+            background: #f5f5f5;
+        }
+
+        .dark-theme .modal-author-info {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .author-label {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .author-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-green);
+        }
+
+        .project-link-btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-cyan));
+            color: var(--white);
+            text-decoration: none;
+            text-align: center;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .project-link-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(61, 59, 201, 0.4);
         }
 
         .no-projects {
@@ -387,12 +566,20 @@
             .filter-input, .filter-select {
                 width: 100%;
             }
+
+            .modal-image {
+                height: 250px;
+            }
+
+            .modal-title {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 <body class="dark-theme">
     <div class="header">
-        <div class="logo">Project View</div>
+        <div class="logo">Project Showcase</div>
         <div style="display: flex; align-items: center;">
             <div class="theme-toggle">
                 <span>🌞</span>
@@ -415,6 +602,31 @@
             <a href="#" onclick="showSection('users')">Users</a>
             <a href="#" onclick="showSection('about')">About Us</a>
         </nav>
+    </div>
+
+    <div class="modal" id="projectModal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div id="modalImage" class="modal-image">📦</div>
+            <div class="modal-body">
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <span class="modal-type" id="modalType"></span>
+                <p class="modal-description" id="modalDescription"></p>
+                <div class="modal-author-info">
+                    <div>
+                        <div class="author-label">Created by</div>
+                        <div class="author-name" id="modalAuthor"></div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="author-label">Date</div>
+                        <div class="project-date" id="modalDate"></div>
+                    </div>
+                </div>
+                <a id="modalLink" href="#" target="_blank" class="project-link-btn">
+                    🚀 Open Project
+                </a>
+            </div>
+        </div>
     </div>
 
     <div class="container">
@@ -461,6 +673,40 @@
     </div>
 
     <script>
+        let projects = [];
+        let users = [];
+
+        async function loadProjectsFromGitHub() {
+            try {
+                const response = await fetch('projects.json?t=' + new Date().getTime());
+                const data = await response.json();
+                
+                projects = data.map(p => ({
+                    ...p,
+                    date: new Date(p.date)
+                }));
+                
+                const userMap = {};
+                projects.forEach(p => {
+                    if (!userMap[p.author]) {
+                        userMap[p.author] = 0;
+                    }
+                    userMap[p.author]++;
+                });
+                
+                users = Object.keys(userMap).map(name => ({
+                    name,
+                    projectCount: userMap[name]
+                }));
+                
+                populateUserFilter();
+                filterProjects();
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                document.getElementById('projectsGrid').innerHTML = 
+                    '<div class="no-projects">Failed to load projects. Make sure projects.json exists.</div>';
+            }
+        }
 
         function toggleTheme() {
             const body = document.body;
@@ -521,6 +767,36 @@
             return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
         }
 
+        function openProjectModal(project) {
+            const modal = document.getElementById('projectModal');
+            const modalImage = document.getElementById('modalImage');
+            
+            if (project.image) {
+                modalImage.innerHTML = `<img src="${project.image}" alt="${project.title}" style="width:100%;height:100%;object-fit:cover;">`;
+            } else {
+                modalImage.innerHTML = '📦';
+            }
+            
+            document.getElementById('modalTitle').textContent = project.title;
+            document.getElementById('modalType').textContent = getTypeName(project.type);
+            document.getElementById('modalType').className = 'modal-type ' + getTypeClass(project.type);
+            document.getElementById('modalDescription').textContent = project.description;
+            document.getElementById('modalAuthor').textContent = project.author;
+            document.getElementById('modalDate').textContent = formatDate(project.date);
+            document.getElementById('modalLink').href = project.url || '#';
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(event) {
+            if (!event || event.target === document.getElementById('projectModal')) {
+                const modal = document.getElementById('projectModal');
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
         function renderProjects(projectsToRender) {
             const grid = document.getElementById('projectsGrid');
             
@@ -530,19 +806,25 @@
             }
             
             grid.innerHTML = projectsToRender.map(project => `
-                <div class="project-card">
-                    <div class="project-header">
-                        <div>
-                            <div class="project-title">${project.title}</div>
-                            <div class="project-author">${project.author}</div>
+                <div class="project-card" onclick='openProjectModal(${JSON.stringify(project)})'>
+                    ${project.image ? 
+                        `<img src="${project.image}" alt="${project.title}" class="project-image" onerror="this.outerHTML='<div class=\\'project-image\\'>📦</div>'">` :
+                        '<div class="project-image">📦</div>'
+                    }
+                    <div class="project-content">
+                        <div class="project-header">
+                            <div>
+                                <div class="project-title">${project.title}</div>
+                                <div class="project-author">${project.author}</div>
+                            </div>
+                            <div class="project-type ${getTypeClass(project.type)}">
+                                ${getTypeName(project.type)}
+                            </div>
                         </div>
-                        <div class="project-type ${getTypeClass(project.type)}">
-                            ${getTypeName(project.type)}
+                        <div class="project-description">${project.description}</div>
+                        <div class="project-meta">
+                            <div class="project-date">${formatDate(project.date)}</div>
                         </div>
-                    </div>
-                    <div class="project-description">${project.description}</div>
-                    <div class="project-meta">
-                        <div class="project-date">${formatDate(project.date)}</div>
                     </div>
                 </div>
             `).join('');
@@ -550,6 +832,10 @@
 
         function renderUsers() {
             const usersList = document.getElementById('usersList');
+            if (users.length === 0) {
+                usersList.innerHTML = '<p style="text-align:center;opacity:0.6;">No users yet</p>';
+                return;
+            }
             usersList.innerHTML = users.map(user => `
                 <div class="user-card">
                     <div class="user-name">${user.name}</div>
@@ -593,8 +879,10 @@
         }
 
         // Initialize
-        populateUserFilter();
-        filterProjects();
+        loadProjectsFromGitHub();
+        
+        // Reload projects every 30 seconds
+        setInterval(loadProjectsFromGitHub, 30000);
     </script>
 </body>
 </html>
