@@ -532,6 +532,7 @@
         .type-backend { background: var(--orange); color: var(--white); }
         .type-ai { background: var(--purple); color: var(--white); }
         .type-other { background: var(--gray-1); color: var(--white); }
+        .type-tool { background: var(--cyan-bright); color: var(--black); }
 
         .project-description {
             margin: 15px 0;
@@ -1152,6 +1153,7 @@
                     <option value="desktop" data-en="Desktop App" data-fa="اپلیکیشن دسکتاپ">Desktop App</option>
                     <option value="backend" data-en="Backend" data-fa="بک‌اند">Backend</option>
                     <option value="ai" data-en="AI/ML" data-fa="هوش مصنوعی">AI/ML</option>
+                    <option value="tool" data-en="Tool" data-fa="ابزار">Tool</option>
                     <option value="other" data-en="Other" data-fa="سایر">Other</option>
                 </select>
                 <select class="filter-select" id="userFilter" onchange="filterProjects()">
@@ -1692,6 +1694,7 @@
                 desktop: currentLang === 'en' ? 'Desktop' : 'دسکتاپ',
                 backend: currentLang === 'en' ? 'Backend' : 'بک‌اند',
                 ai: currentLang === 'en' ? 'AI/ML' : 'هوش مصنوعی',
+                tool: currentLang === 'en' ? 'Tool' : 'ابزار',
                 other: currentLang === 'en' ? 'Other' : 'سایر'
             };
             return types[type] || types.other;
