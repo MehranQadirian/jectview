@@ -1,118 +1,1823 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>\n  <meta name="description" content="Projects View - Showcase of projects and contributors" />
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Projects View</title>
-  <link rel="stylesheet" href="assets/css/style.css" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects View</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-red: #ee5d4f;
+            --primary-blue: #3d3bc9;
+            --primary-green: #76ed5d;
+            --primary-cyan: #7bc6da;
+            --gray-1: #4f4f4f;
+            --gray-2: #696969;
+            --white: #ffffff;
+            --blue-dark: #325f78;
+            --blue-darker: #234354;
+            --pink: #ba0d55;
+            --cyan-bright: #3edee6;
+            --purple: #8d04d8;
+            --orange: #ef8e4a;
+            --orange-dark: #cd5f00;
+            --black: #373737;
+            --purple-dark: #221540;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.5s, color 0.5s;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .graph-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .graph-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-cyan), transparent);
+            animation: moveLine 20s linear infinite;
+            opacity: 0.3;
+        }
+
+        .graph-line:nth-child(1) { top: 10%; animation-duration: 15s; }
+        .graph-line:nth-child(2) { top: 30%; animation-duration: 20s; animation-delay: 2s; }
+        .graph-line:nth-child(3) { top: 50%; animation-duration: 18s; animation-delay: 4s; }
+        .graph-line:nth-child(4) { top: 70%; animation-duration: 22s; animation-delay: 1s; }
+        .graph-line:nth-child(5) { top: 90%; animation-duration: 16s; animation-delay: 3s; }
+
+        .graph-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            animation: float 10s ease-in-out infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes moveLine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(50px, -30px); }
+            50% { transform: translate(-30px, 50px); }
+            75% { transform: translate(40px, 20px); }
+        }
+
+        body.light-theme {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e8eef3 100%);
+            color: var(--black);
+        }
+
+        body.dark-theme {
+            background: linear-gradient(135deg, #0a0a0a 0%, var(--purple-dark) 100%);
+            color: var(--white);
+        }
+
+        .light-theme .graph-line {
+            background: linear-gradient(90deg, transparent, var(--primary-blue), transparent);
+        }
+
+        .dark-theme .graph-line {
+            background: linear-gradient(90deg, transparent, var(--primary-cyan), transparent);
+        }
+
+        .header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid var(--primary-cyan);
+            transition: all 0.3s;
+        }
+
+        .light-theme .header {
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .dark-theme .header {
+            background: rgba(34, 21, 64, 0.85);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(90deg, var(--primary-red), var(--primary-blue), var(--primary-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            border-radius: 25px;
+            transition: background 0.3s;
+        }
+
+        .light-theme .toggle-group {
+            background: rgba(0,0,0,0.05);
+        }
+
+        .dark-theme .toggle-group {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 25px;
+            background: var(--gray-2);
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: var(--primary-blue);
+        }
+
+        .toggle-slider {
+            width: 21px;
+            height: 21px;
+            background: var(--white);
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            left: 27px;
+        }
+
+        .lang-switch {
+            cursor: pointer;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid var(--primary-cyan);
+        }
+
+        .lang-switch:hover {
+            background: var(--primary-cyan);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .light-theme .nav-link {
+            color: var(--black);
+        }
+
+        .dark-theme .nav-link {
+            color: var(--white);
+        }
+
+        .nav-link:hover {
+            background: var(--primary-cyan);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+            padding: 10px;
+        }
+
+        .hamburger span {
+            width: 30px;
+            height: 3px;
+            background: var(--primary-cyan);
+            transition: 0.3s;
+            border-radius: 3px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(8px, -8px);
+        }
+
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100%;
+            transition: right 0.3s;
+            z-index: 200;
+            padding: 80px 20px 20px 20px;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .light-theme .mobile-sidebar {
+            background: var(--white);
+        }
+
+        .dark-theme .mobile-sidebar {
+            background: var(--purple-dark);
+        }
+
+        .mobile-sidebar.active {
+            right: 0;
+        }
+
+        .mobile-sidebar nav a {
+            display: block;
+            padding: 15px;
+            margin: 10px 0;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+
+        .light-theme .mobile-sidebar nav a {
+            color: var(--black);
+        }
+
+        .dark-theme .mobile-sidebar nav a {
+            color: var(--white);
+        }
+
+        .mobile-sidebar nav a:hover {
+            background: var(--primary-cyan);
+            color: var(--white);
+            transform: translateX(-10px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 80px 20px;
+            margin-bottom: 60px;
+        }
+
+        .hero-title {
+            font-size: 56px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--primary-red), var(--primary-blue), var(--primary-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero-subtitle {
+            font-size: 24px;
+            opacity: 0.8;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            animation: fadeIn 1s ease 0.4s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .filter-input, .filter-select {
+            padding: 12px 20px;
+            border: 2px solid var(--primary-cyan);
+            border-radius: 25px;
+            font-size: 16px;
+            transition: 0.3s;
+            outline: none;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .light-theme .filter-input, .light-theme .filter-select {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        .dark-theme .filter-input, .dark-theme .filter-select {
+            background: var(--blue-darker);
+            color: var(--white);
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 15px rgba(61, 59, 201, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .project-card {
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            border: 2px solid transparent;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .project-card.visible {
+            animation: slideInUp 0.6s ease forwards;
+        }
+
+        @keyframes slideInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .light-theme .project-card {
+            background: var(--white);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-theme .project-card {
+            background: linear-gradient(135deg, var(--blue-darker) 0%, var(--purple-dark) 100%);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .project-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(61, 59, 201, 0.4);
+            border-color: var(--primary-cyan);
+        }
+
+        .project-image-container {
+            width: 100%;
+            height: 220px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .project-card:hover .project-image {
+            transform: scale(1.1);
+        }
+
+        .project-languages {
+            display: flex;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+        }
+
+        .language-section {
+            flex: 1;
+            background-size: cover;
+            background-position: center;
+            transition: flex 0.3s;
+        }
+
+        .project-card:hover .language-section {
+            flex: 1.5;
+        }
+
+        .project-content {
+            padding: 25px;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+            gap: 15px;
+        }
+
+        .project-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--primary-cyan);
+            margin-bottom: 8px;
+            transition: color 0.3s;
+        }
+
+        .project-card:hover .project-title {
+            color: var(--primary-blue);
+        }
+
+        .project-type {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            text-transform: uppercase;
+        }
+
+        .type-web { background: var(--primary-blue); color: var(--white); }
+        .type-mobile { background: var(--primary-green); color: var(--black); }
+        .type-desktop { background: var(--primary-red); color: var(--white); }
+        .type-backend { background: var(--orange); color: var(--white); }
+        .type-ai { background: var(--purple); color: var(--white); }
+        .type-other { background: var(--gray-1); color: var(--white); }
+
+        .project-description {
+            margin: 15px 0;
+            line-height: 1.7;
+            opacity: 0.9;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .project-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid;
+        }
+
+        .light-theme .project-meta {
+            border-color: #e0e0e0;
+        }
+
+        .dark-theme .project-meta {
+            border-color: var(--blue-dark);
+        }
+
+        .project-author {
+            font-weight: bold;
+            color: var(--primary-green);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .project-author:hover {
+            color: var(--primary-cyan);
+            transform: translateX(5px);
+        }
+
+        .project-date {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .project-detail {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .project-detail.active {
+            display: block;
+        }
+
+        .detail-header {
+            width: 100%;
+            height: 500px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            margin-bottom: 40px;
+        }
+
+        .detail-header-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .detail-header-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 40px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+        }
+
+        .detail-title {
+            font-size: 48px;
+            font-weight: bold;
+            color: var(--white);
+            margin-bottom: 15px;
+        }
+
+        .detail-body {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .detail-meta {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+            padding: 30px;
+            border-radius: 15px;
+            flex-wrap: wrap;
+        }
+
+        .light-theme .detail-meta {
+            background: rgba(0,0,0,0.03);
+        }
+
+        .dark-theme .detail-meta {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .meta-item {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .meta-label {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .meta-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-cyan);
+        }
+
+        .detail-description {
+            font-size: 18px;
+            line-height: 2;
+            margin-bottom: 40px;
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        .light-theme .detail-description {
+            background: rgba(0,0,0,0.03);
+        }
+
+        .dark-theme .detail-description {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 20px 40px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-cyan));
+            color: var(--white);
+            text-decoration: none;
+            text-align: center;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(61, 59, 201, 0.4);
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 20px 40px;
+            background: transparent;
+            color: var(--primary-cyan);
+            text-decoration: none;
+            text-align: center;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: 2px solid var(--primary-cyan);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-cyan);
+            color: var(--white);
+            transform: translateY(-5px);
+        }
+
+        .user-page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .user-page.active {
+            display: block;
+        }
+
+        .user-header {
+            text-align: center;
+            padding: 60px 20px;
+            margin-bottom: 60px;
+            border-radius: 20px;
+        }
+
+        .light-theme .user-header {
+            background: linear-gradient(135deg, rgba(61, 59, 201, 0.1), rgba(123, 198, 218, 0.1));
+        }
+
+        .dark-theme .user-header {
+            background: linear-gradient(135deg, rgba(61, 59, 201, 0.3), rgba(123, 198, 218, 0.3));
+        }
+
+        .user-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: var(--white);
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(61, 59, 201, 0.3);
+        }
+
+        .user-name {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--primary-red), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-bio {
+            font-size: 18px;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto 20px;
+            line-height: 1.8;
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--primary-cyan);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .user-social {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .social-link {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .light-theme .social-link {
+            background: rgba(0,0,0,0.05);
+            color: var(--black);
+        }
+
+        .dark-theme .social-link {
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+        }
+
+        .social-link:hover {
+            background: var(--primary-cyan);
+            color: var(--white);
+            transform: translateY(-5px);
+        }
+
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-cyan));
+            color: var(--white);
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 999;
+            box-shadow: 0 5px 20px rgba(61, 59, 201, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(61, 59, 201, 0.6);
+        }
+
+        .footer {
+            margin-top: 100px;
+            padding: 60px 20px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .light-theme .footer {
+            background: linear-gradient(135deg, rgba(61, 59, 201, 0.05), rgba(123, 198, 218, 0.05));
+            border-top: 2px solid rgba(0,0,0,0.1);
+        }
+
+        .dark-theme .footer {
+            background: linear-gradient(135deg, rgba(61, 59, 201, 0.2), rgba(123, 198, 218, 0.2));
+            border-top: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+            text-align: left;
+        }
+
+        .footer-section h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--primary-cyan);
+        }
+
+        .footer-section p, .footer-section a {
+            line-height: 2;
+            opacity: 0.8;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s;
+        }
+
+        .light-theme .footer-section a {
+            color: var(--black);
+        }
+
+        .dark-theme .footer-section a {
+            color: var(--white);
+        }
+
+        .footer-section a:hover {
+            color: var(--primary-cyan);
+            transform: translateX(5px);
+        }
+
+        .watermark {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 40px 0 20px;
+            cursor: pointer;
+            display: inline-block;
+            position: relative;
+        }
+
+        .watermark-letter {
+            display: inline-block;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .watermark-letter:hover {
+            color: var(--primary-cyan);
+            transform: scale(1.2);
+        }
+
+        .watermark-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            background: var(--primary-blue);
+            color: var(--white);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            pointer-events: none;
+        }
+
+        .watermark-letter:hover .watermark-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        .footer-copyright {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid;
+            opacity: 0.6;
+        }
+
+        .light-theme .footer-copyright {
+            border-color: rgba(0,0,0,0.1);
+        }
+
+        .dark-theme .footer-copyright {
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .no-projects {
+            text-align: center;
+            padding: 80px 20px;
+            font-size: 20px;
+            opacity: 0.6;
+        }
+
+        @media (max-width: 1024px) {
+            .hero-title {
+                font-size: 42px;
+            }
+
+            .projects-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .header {
+                padding: 15px 20px;
+            }
+
+            .logo {
+                font-size: 22px;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .hero-subtitle {
+                font-size: 18px;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .filter-input, .filter-select {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .detail-header {
+                height: 300px;
+            }
+
+            .detail-title {
+                font-size: 28px;
+            }
+
+            .detail-header-overlay {
+                padding: 20px;
+            }
+
+            .detail-actions {
+                flex-direction: column;
+            }
+
+            .user-name {
+                font-size: 32px;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-section {
+                text-align: center;
+            }
+
+            .footer-section a {
+                text-align: center;
+            }
+        }
+    </style>
 </head>
-<body>
-  <!-- animated background canvas -->
-  <canvas id="bg-canvas" class="bg-canvas" aria-hidden="true"></canvas>
-
-  <header class="site-header" id="siteHeader">
-    <div class="container header-inner">
-      <div class="brand">
-        <h1 id="logo">Projects View</h1>
-        <div class="sub" id="subLogo">Showcase of contributors</div>
-      </div>
-
-      <div class="controls">
-        <div class="lang-switch">
-          <button id="langBtn" class="btn">EN</button>
+<body class="dark-theme" dir="ltr">
+    <div class="animated-background">
+        <div class="graph-container">
+            <div class="graph-line"></div>
+            <div class="graph-line"></div>
+            <div class="graph-line"></div>
+            <div class="graph-line"></div>
+            <div class="graph-line"></div>
         </div>
-        <div class="theme-switch" title="Toggle theme">
-          <button id="themeBtn" class="btn">🌙</button>
-        </div>
-        <button id="menuBtn" class="hamburger" aria-label="menu">☰</button>
-      </div>
     </div>
-  </header>
 
-  <nav class="top-nav" id="topNav">
-    <a href="#" data-i18n="nav_projects" onclick="showSection('projects')">Projects</a>
-    <a href="#" data-i18n="nav_users" onclick="showSection('users')">Users</a>
-    <a href="#" data-i18n="nav_about" onclick="showSection('about')">About</a>
-  </nav>
+    <div class="header">
+        <div class="logo" onclick="navigateHome()">Projects View</div>
+        
+        <nav class="nav-menu">
+            <a href="#" class="nav-link" onclick="navigateHome()" data-en="Projects" data-fa="پروژه‌ها">Projects</a>
+            <a href="#" class="nav-link" onclick="showUsersPage()" data-en="Developers" data-fa="توسعه‌دهندگان">Developers</a>
+            <a href="#" class="nav-link" onclick="showAboutPage()" data-en="About" data-fa="درباره">About</a>
+        </nav>
 
-  <main class="container main-content">
-    <!-- Projects Section -->
-    <section id="projectsSection" class="section active">
-      <div class="filters">
-        <input id="searchInput" class="filter" placeholder="Search projects..." data-i18n-placeholder="search_placeholder" />
-        <select id="typeFilter" class="filter">
-          <option value="">All types</option>
-          <option value="web">Web</option>
-          <option value="mobile">Mobile</option>
-          <option value="desktop">Desktop</option>
-          <option value="backend">Backend</option>
-          <option value="ai">AI/ML</option>
-          <option value="other">Other</option>
-        </select>
-        <select id="userFilter" class="filter">
-          <option value="">All users</option>
-        </select>
-        <select id="sortFilter" class="filter">
-          <option value="newest">Newest</option>
-          <option value="oldest">Oldest</option>
-        </select>
-      </div>
+        <div class="header-controls">
+            <div class="toggle-group">
+                <span>☀️</span>
+                <div class="toggle-switch active" onclick="toggleTheme()">
+                    <div class="toggle-slider"></div>
+                </div>
+                <span>🌙</span>
+            </div>
 
-      <div id="projectsGrid" class="projects-grid" aria-live="polite"></div>
-    </section>
+            <div class="lang-switch" onclick="toggleLanguage()">
+                <span id="langText">فارسی</span>
+            </div>
 
-    <!-- Users Section -->
-    <section id="usersSection" class="section" style="display:none;">
-      <h2 data-i18n="contributors">Contributors</h2>
-      <div id="usersList"></div>
-    </section>
-
-    <!-- About Section -->
-    <section id="aboutSection" class="section" style="display:none;">
-      <h2 data-i18n="about_title">About</h2>
-      <p data-i18n="about_text">This is a modular static showcase built for GitHub Pages.</p>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <div class="watermark" id="watermark">
-        <span class="initial" data-user="mehran">M</span>
-        <span class="amp">&amp;</span>
-        <span class="initial" data-user="nima">N</span>
-        <div class="expanded">
-          <a href="https://github.com/mehranqadirian" target="_blank" class="owner" data-owner="mehran">Mehran</a>
-          <a href="https://github.com/naseridev" target="_blank" class="owner" data-owner="nima">Nima</a>
+            <div class="hamburger" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
-      </div>
-
-      <div class="footer-right">
-        <div class="top-link" id="topLink" title="Back to top">↑</div>
-      </div>
     </div>
-  </footer>
 
-  <!-- Scroll top button -->
-  <button id="scrollTopBtn" class="scroll-top" aria-label="Scroll to top">▲</button>
+    <div class="mobile-sidebar">
+        <nav>
+            <a href="#" onclick="navigateHome(); toggleMobileMenu()" data-en="Projects" data-fa="پروژه‌ها">Projects</a>
+            <a href="#" onclick="showUsersPage(); toggleMobileMenu()" data-en="Developers" data-fa="توسعه‌دهندگان">Developers</a>
+            <a href="#" onclick="showAboutPage(); toggleMobileMenu()" data-en="About" data-fa="درباره">About</a>
+        </nav>
+    </div>
 
-  <!-- Modal for quick project preview -->
-  <div id="projectModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="modal-content">
-      <button class="modal-close" id="modalClose">×</button>
-      <div id="modalHeader" class="modal-header"></div>
-      <div class="modal-body">
-        <h3 id="modalTitle"></h3>
-        <p id="modalDesc"></p>
-        <div class="meta">
-          <span id="modalAuthor"></span>
-          <span id="modalDate"></span>
+    <button class="scroll-top" onclick="scrollToTop()">↑</button>
+
+    <div class="container">
+        <div id="home-section">
+            <div class="hero-section">
+                <h1 class="hero-title" data-en="Discover Amazing Projects" data-fa="پروژه‌های شگفت‌انگیز را کشف کنید">Discover Amazing Projects</h1>
+                <p class="hero-subtitle" data-en="Explore innovative solutions crafted by talented developers" data-fa="راه‌حل‌های نوآورانه ساخته شده توسط توسعه‌دهندگان با استعداد را کاوش کنید">Explore innovative solutions crafted by talented developers</p>
+            </div>
+
+            <div class="filters">
+                <input type="text" class="filter-input" id="searchInput" placeholder="Search projects..." oninput="filterProjects()" data-placeholder-en="Search projects..." data-placeholder-fa="جستجوی پروژه‌ها...">
+                <select class="filter-select" id="typeFilter" onchange="filterProjects()">
+                    <option value="" data-en="All Types" data-fa="همه انواع">All Types</option>
+                    <option value="web" data-en="Web Development" data-fa="توسعه وب">Web Development</option>
+                    <option value="mobile" data-en="Mobile App" data-fa="اپلیکیشن موبایل">Mobile App</option>
+                    <option value="desktop" data-en="Desktop App" data-fa="اپلیکیشن دسکتاپ">Desktop App</option>
+                    <option value="backend" data-en="Backend" data-fa="بک‌اند">Backend</option>
+                    <option value="ai" data-en="AI/ML" data-fa="هوش مصنوعی">AI/ML</option>
+                    <option value="other" data-en="Other" data-fa="سایر">Other</option>
+                </select>
+                <select class="filter-select" id="userFilter" onchange="filterProjects()">
+                    <option value="" data-en="All Developers" data-fa="همه توسعه‌دهندگان">All Developers</option>
+                </select>
+                <select class="filter-select" id="sortFilter" onchange="filterProjects()">
+                    <option value="newest" data-en="Newest First" data-fa="جدیدترین">Newest First</option>
+                    <option value="oldest" data-en="Oldest First" data-fa="قدیمی‌ترین">Oldest First</option>
+                </select>
+            </div>
+
+            <div class="projects-grid" id="projectsGrid"></div>
         </div>
-        <a id="modalUrl" class="btn block" href="#" target="_blank">Open on GitHub</a>
-      </div>
-    </div>
-  </div>
 
-  <script type="module" src="assets/js/main.js"></script>
+        <div id="project-detail" class="project-detail"></div>
+
+        <div id="user-page" class="user-page"></div>
+
+        <div id="users-section" style="display: none;">
+            <div class="hero-section">
+                <h1 class="hero-title" data-en="Our Talented Developers" data-fa="توسعه‌دهندگان با استعداد ما">Our Talented Developers</h1>
+                <p class="hero-subtitle" data-en="Meet the creative minds behind these amazing projects" data-fa="با ذهن‌های خلاق پشت این پروژه‌های شگفت‌انگیز آشنا شوید">Meet the creative minds behind these amazing projects</p>
+            </div>
+            <div class="projects-grid" id="usersGrid"></div>
+        </div>
+
+        <div id="about-section" style="display: none;">
+            <div class="hero-section">
+                <h1 class="hero-title" data-en="About Projects View" data-fa="درباره پروژه‌های ویو">About Projects View</h1>
+            </div>
+            <div class="detail-description">
+                <p style="margin-bottom: 20px;" data-en="Welcome to Projects View, a collaborative platform showcasing innovative projects from talented developers around the world." data-fa="به پروژه‌های ویو خوش آمدید، یک پلتفرم مشارکتی که پروژه‌های نوآورانه از توسعه‌دهندگان با استعداد در سراسر جهان را به نمایش می‌گذارد.">
+                    Welcome to Projects View, a collaborative platform showcasing innovative projects from talented developers around the world.
+                </p>
+                <p style="margin-bottom: 20px;" data-en="Our mission is to provide a beautiful and intuitive space where developers can share their work, inspire others, and connect with the community." data-fa="مأموریت ما فراهم کردن یک فضای زیبا و بصری است که در آن توسعه‌دهندگان می‌توانند کارهای خود را به اشتراک بگذارند، دیگران را الهام بخشند و با جامعه ارتباط برقرار کنند.">
+                    Our mission is to provide a beautiful and intuitive space where developers can share their work, inspire others, and connect with the community.
+                </p>
+                <p data-en="Browse through various projects, filter by technology and author, and get inspired by what our talented community is building!" data-fa="پروژه‌های مختلف را مرور کنید، بر اساس تکنولوژی و نویسنده فیلتر کنید، و از آنچه جامعه با استعداد ما می‌سازد الهام بگیرید!">
+                    Browse through various projects, filter by technology and author, and get inspired by what our talented community is building!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3 data-en="Projects View" data-fa="پروژه‌های ویو">Projects View</h3>
+                    <p data-en="A showcase platform for innovative developer projects" data-fa="یک پلتفرم نمایش برای پروژه‌های نوآورانه توسعه‌دهندگان">A showcase platform for innovative developer projects</p>
+                </div>
+                <div class="footer-section">
+                    <h3 data-en="Quick Links" data-fa="لینک‌های سریع">Quick Links</h3>
+                    <a href="#" onclick="navigateHome()" data-en="Projects" data-fa="پروژه‌ها">Projects</a>
+                    <a href="#" onclick="showUsersPage()" data-en="Developers" data-fa="توسعه‌دهندگان">Developers</a>
+                    <a href="#" onclick="showAboutPage()" data-en="About" data-fa="درباره">About</a>
+                </div>
+                <div class="footer-section">
+                    <h3 data-en="Connect" data-fa="ارتباط">Connect</h3>
+                    <a href="https://github.com/mehrankadirian" target="_blank">Mehran's GitHub</a>
+                    <a href="https://github.com/naseridev" target="_blank">Nima's GitHub</a>
+                </div>
+            </div>
+
+            <div class="watermark">
+                <span class="watermark-letter" onclick="window.open('https://github.com/mehrankadirian', '_blank')">
+                    M
+                    <span class="watermark-tooltip">Mehran</span>
+                </span>
+                <span style="color: var(--primary-cyan);"> & </span>
+                <span class="watermark-letter" onclick="window.open('https://github.com/naseridev', '_blank')">
+                    N
+                    <span class="watermark-tooltip">Nima</span>
+                </span>
+            </div>
+
+            <div class="footer-copyright">
+                <p data-en="© 2025 Projects View. All rights reserved." data-fa="© 2025 پروژه‌های ویو. تمامی حقوق محفوظ است.">© 2025 Projects View. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const languageImages = {
+            'php': 'https://raw.githubusercontent.com/github/explore/main/topics/php/php.png',
+            'csharp': 'https://raw.githubusercontent.com/github/explore/main/topics/csharp/csharp.png',
+            'python': 'https://raw.githubusercontent.com/github/explore/main/topics/python/python.png',
+            'javascript': 'https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png',
+            'java': 'https://raw.githubusercontent.com/github/explore/main/topics/java/java.png',
+            'cpp': 'https://raw.githubusercontent.com/github/explore/main/topics/cpp/cpp.png',
+            'ruby': 'https://raw.githubusercontent.com/github/explore/main/topics/ruby/ruby.png',
+            'go': 'https://raw.githubusercontent.com/github/explore/main/topics/go/go.png',
+            'rust': 'https://raw.githubusercontent.com/github/explore/main/topics/rust/rust.png',
+            'typescript': 'https://raw.githubusercontent.com/github/explore/main/topics/typescript/typescript.png',
+            'html': 'https://raw.githubusercontent.com/github/explore/main/topics/html/html.png',
+            'css': 'https://raw.githubusercontent.com/github/explore/main/topics/css/css.png',
+            'swift': 'https://raw.githubusercontent.com/github/explore/main/topics/swift/swift.png',
+            'kotlin': 'https://raw.githubusercontent.com/github/explore/main/topics/kotlin/kotlin.png',
+            'dart': 'https://raw.githubusercontent.com/github/explore/main/topics/dart/dart.png'
+        };
+
+        let projects = [];
+        let users = [];
+        let currentLang = 'en';
+
+        const sampleProjects = [
+            {
+                id: 1,
+                title: 'E-Commerce Platform',
+                description: 'A full-featured e-commerce platform with payment integration, shopping cart, and admin dashboard. Built with modern technologies and best practices for scalability and performance.',
+                type: 'web',
+                author: 'Mehran Kadirian',
+                date: '2025-03-15',
+                languages: ['php', 'javascript', 'html'],
+                github: 'https://github.com/mehrankadirian/ecommerce'
+            },
+            {
+                id: 2,
+                title: 'Task Manager App',
+                description: 'Desktop application for managing tasks with drag-and-drop interface and notifications. Features include priority management, deadlines, and team collaboration.',
+                type: 'desktop',
+                author: 'Nima Naseri',
+                date: '2025-02-20',
+                languages: ['csharp'],
+                github: 'https://github.com/naseridev/taskmanager'
+            },
+            {
+                id: 3,
+                title: 'AI Image Generator',
+                description: 'Machine learning model that generates realistic images from text descriptions using GANs. Supports multiple styles and high-resolution output.',
+                type: 'ai',
+                author: 'Mehran Kadirian',
+                date: '2025-01-10',
+                languages: ['python'],
+                github: 'https://github.com/mehrankadirian/ai-image-gen'
+            },
+            {
+                id: 4,
+                title: 'Mobile Fitness Tracker',
+                description: 'Cross-platform mobile app for tracking workouts, nutrition, and health metrics. Includes social features and achievement system.',
+                type: 'mobile',
+                author: 'Nima Naseri',
+                date: '2025-02-05',
+                languages: ['dart', 'kotlin'],
+                github: 'https://github.com/naseridev/fitness-tracker'
+            },
+            {
+                id: 5,
+                title: 'REST API Framework',
+                description: 'Lightweight and fast REST API framework with built-in authentication, rate limiting, and documentation generation.',
+                type: 'backend',
+                author: 'Mehran Kadirian',
+                date: '2025-01-25',
+                languages: ['go', 'typescript'],
+                github: 'https://github.com/mehrankadirian/api-framework'
+            },
+            {
+                id: 6,
+                title: 'Data Visualization Dashboard',
+                description: 'Interactive dashboard for visualizing complex datasets with real-time updates and customizable charts.',
+                type: 'web',
+                author: 'Nima Naseri',
+                date: '2025-03-01',
+                languages: ['javascript', 'python'],
+                github: 'https://github.com/naseridev/data-viz'
+            }
+        ];
+
+        const sampleUsers = [
+            {
+                name: 'Mehran Kadirian',
+                bio: 'Full-stack developer passionate about creating elegant solutions to complex problems. Specializing in web development and AI/ML.',
+                github: 'https://github.com/mehrankadirian',
+                email: 'mehran@example.com',
+                location: 'Iran'
+            },
+            {
+                name: 'Nima Naseri',
+                bio: 'Desktop and mobile application developer specializing in .NET and cross-platform technologies.',
+                github: 'https://github.com/naseridev',
+                email: 'nima@example.com',
+                location: 'Iran'
+            }
+        ];
+
+        async function init() {
+            try {
+                const projectsResponse = await fetch('projects.json?t=' + new Date().getTime());
+                const usersResponse = await fetch('users.json?t=' + new Date().getTime());
+                
+                if (projectsResponse.ok) {
+                    projects = await projectsResponse.json();
+                } else {
+                    projects = sampleProjects;
+                }
+                
+                if (usersResponse.ok) {
+                    users = await usersResponse.json();
+                } else {
+                    users = sampleUsers;
+                }
+            } catch (error) {
+                console.log('Using sample data');
+                projects = sampleProjects;
+                users = sampleUsers;
+            }
+
+            populateUserFilter();
+            renderProjects();
+            setupScrollObserver();
+            setupScrollButton();
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const toggle = document.querySelector('.toggle-switch');
+            
+            if (body.classList.contains('dark-theme')) {
+                body.classList.remove('dark-theme');
+                body.classList.add('light-theme');
+                toggle.classList.remove('active');
+            } else {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+                toggle.classList.add('active');
+            }
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'fa' : 'en';
+            document.body.dir = currentLang === 'fa' ? 'rtl' : 'ltr';
+            document.getElementById('langText').textContent = currentLang === 'en' ? 'فارسی' : 'English';
+            
+            document.querySelectorAll('[data-en]').forEach(el => {
+                if (el.tagName === 'INPUT') {
+                    el.placeholder = el.getAttribute('data-placeholder-' + currentLang);
+                } else if (el.tagName === 'OPTION') {
+                    el.textContent = el.getAttribute('data-' + currentLang);
+                } else {
+                    el.textContent = el.getAttribute('data-' + currentLang);
+                }
+            });
+
+            renderProjects();
+            
+            const activePage = document.querySelector('#user-page.active');
+            if (activePage) {
+                const userName = activePage.querySelector('.user-name').textContent;
+                showUserPage(userName);
+            }
+        }
+
+        function toggleMobileMenu() {
+            document.querySelector('.hamburger').classList.toggle('active');
+            document.querySelector('.mobile-sidebar').classList.toggle('active');
+        }
+
+        function navigateHome() {
+            document.getElementById('home-section').style.display = 'block';
+            document.getElementById('project-detail').classList.remove('active');
+            document.getElementById('user-page').classList.remove('active');
+            document.getElementById('users-section').style.display = 'none';
+            document.getElementById('about-section').style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showUsersPage() {
+            document.getElementById('home-section').style.display = 'none';
+            document.getElementById('project-detail').classList.remove('active');
+            document.getElementById('user-page').classList.remove('active');
+            document.getElementById('users-section').style.display = 'block';
+            document.getElementById('about-section').style.display = 'none';
+            renderUsersList();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showAboutPage() {
+            document.getElementById('home-section').style.display = 'none';
+            document.getElementById('project-detail').classList.remove('active');
+            document.getElementById('user-page').classList.remove('active');
+            document.getElementById('users-section').style.display = 'none';
+            document.getElementById('about-section').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function populateUserFilter() {
+            const userFilter = document.getElementById('userFilter');
+            const uniqueUsers = [...new Set(projects.map(p => p.author))];
+            
+            const allOption = document.createElement('option');
+            allOption.value = '';
+            allOption.setAttribute('data-en', 'All Developers');
+            allOption.setAttribute('data-fa', 'همه توسعه‌دهندگان');
+            allOption.textContent = currentLang === 'en' ? 'All Developers' : 'همه توسعه‌دهندگان';
+            
+            userFilter.innerHTML = '';
+            userFilter.appendChild(allOption);
+            
+            uniqueUsers.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user;
+                option.textContent = user;
+                userFilter.appendChild(option);
+            });
+        }
+
+        function getLanguageImage(lang) {
+            return languageImages[lang.toLowerCase()] || languageImages['html'];
+        }
+
+        function renderProjects() {
+            const grid = document.getElementById('projectsGrid');
+            const filtered = getFilteredProjects();
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="no-projects">${currentLang === 'en' ? 'No projects found' : 'پروژه‌ای یافت نشد'}</div>`;
+                return;
+            }
+            
+            grid.innerHTML = filtered.map(project => {
+                const languagesHTML = project.languages && project.languages.length > 0 
+                    ? `<div class="project-languages">
+                        ${project.languages.map(lang => `
+                            <div class="language-section" style="background-image: url('${getLanguageImage(lang)}');"></div>
+                        `).join('')}
+                    </div>`
+                    : '<div class="project-image">📦</div>';
+                
+                return `
+                    <div class="project-card" onclick="showProjectDetail(${project.id})">
+                        <div class="project-image-container">
+                            ${languagesHTML}
+                        </div>
+                        <div class="project-content">
+                            <div class="project-header">
+                                <div style="flex: 1;">
+                                    <div class="project-title">${project.title}</div>
+                                    <div class="project-author" onclick="event.stopPropagation(); showUserPage('${project.author}')">${project.author}</div>
+                                </div>
+                                <div class="project-type type-${project.type}">
+                                    ${getTypeName(project.type)}
+                                </div>
+                            </div>
+                            <div class="project-description">${project.description}</div>
+                            <div class="project-meta">
+                                <div class="project-date">${formatDate(project.date)}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            setTimeout(() => {
+                document.querySelectorAll('.project-card').forEach(card => {
+                    observer.observe(card);
+                });
+            }, 100);
+        }
+
+        function getFilteredProjects() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const type = document.getElementById('typeFilter').value;
+            const user = document.getElementById('userFilter').value;
+            const sort = document.getElementById('sortFilter').value;
+            
+            let filtered = projects.filter(p => {
+                const matchSearch = p.title.toLowerCase().includes(search) || 
+                                  p.description.toLowerCase().includes(search);
+                const matchType = !type || p.type === type;
+                const matchUser = !user || p.author === user;
+                return matchSearch && matchType && matchUser;
+            });
+            
+            filtered.sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                return sort === 'newest' ? dateB - dateA : dateA - dateB;
+            });
+            
+            return filtered;
+        }
+
+        function filterProjects() {
+            renderProjects();
+        }
+
+        function showProjectDetail(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            if (!project) return;
+            
+            const languagesHTML = project.languages && project.languages.length > 0 
+                ? `<div class="project-languages">
+                    ${project.languages.map(lang => `
+                        <div class="language-section" style="background-image: url('${getLanguageImage(lang)}');"></div>
+                    `).join('')}
+                </div>`
+                : '<div style="background: linear-gradient(135deg, var(--primary-blue), var(--primary-cyan)); width: 100%; height: 100%;"></div>';
+            
+            const detailHTML = `
+                <div class="detail-header">
+                    ${languagesHTML}
+                    <div class="detail-header-overlay">
+                        <div class="detail-title">${project.title}</div>
+                        <div class="project-type type-${project.type}" style="display: inline-block;">
+                            ${getTypeName(project.type)}
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-body">
+                    <div class="detail-meta">
+                        <div class="meta-item">
+                            <div class="meta-label">${currentLang === 'en' ? 'Author' : 'نویسنده'}</div>
+                            <div class="meta-value" style="cursor: pointer;" onclick="showUserPage('${project.author}')">${project.author}</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">${currentLang === 'en' ? 'Date' : 'تاریخ'}</div>
+                            <div class="meta-value">${formatDate(project.date)}</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">${currentLang === 'en' ? 'Type' : 'نوع'}</div>
+                            <div class="meta-value">${getTypeName(project.type)}</div>
+                        </div>
+                    </div>
+                    <div class="detail-description">
+                        ${project.description}
+                    </div>
+                    ${project.languages ? `
+                        <div class="detail-meta">
+                            <div class="meta-item" style="flex: none; width: 100%;">
+                                <div class="meta-label">${currentLang === 'en' ? 'Technologies' : 'تکنولوژی‌ها'}</div>
+                                <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                                    ${project.languages.map(lang => `
+                                        <span style="background: var(--primary-cyan); color: var(--white); padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: bold;">
+                                            ${lang.toUpperCase()}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                    <div class="detail-actions">
+                        <a href="${project.github || '#'}" target="_blank" class="btn-primary">
+                            <span>🚀</span>
+                            <span>${currentLang === 'en' ? 'View on GitHub' : 'مشاهده در گیت‌هاب'}</span>
+                        </a>
+                        <button class="btn-secondary" onclick="navigateHome()">
+                            <span>←</span>
+                            <span>${currentLang === 'en' ? 'Back to Projects' : 'بازگشت به پروژه‌ها'}</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('project-detail').innerHTML = detailHTML;
+            document.getElementById('home-section').style.display = 'none';
+            document.getElementById('project-detail').classList.add('active');
+            document.getElementById('user-page').classList.remove('active');
+            document.getElementById('users-section').style.display = 'none';
+            document.getElementById('about-section').style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showUserPage(userName) {
+            const user = users.find(u => u.name === userName);
+            if (!user) return;
+            
+            const userProjects = projects.filter(p => p.author === userName);
+            const initials = userName.split(' ').map(n => n[0]).join('');
+            
+            const userHTML = `
+                <div class="user-header">
+                    <div class="user-avatar">${initials}</div>
+                    <h1 class="user-name">${user.name}</h1>
+                    <p class="user-bio">${user.bio || ''}</p>
+                    <div class="user-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">${userProjects.length}</div>
+                            <div class="stat-label">${currentLang === 'en' ? 'Projects' : 'پروژه'}</div>
+                        </div>
+                        ${user.location ? `
+                            <div class="stat-item">
+                                <div class="stat-value">📍</div>
+                                <div class="stat-label">${user.location}</div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="user-social">
+                        ${user.github ? `<a href="${user.github}" target="_blank" class="social-link" title="GitHub">💻</a>` : ''}
+                        ${user.email ? `<a href="mailto:${user.email}" class="social-link" title="Email">📧</a>` : ''}
+                    </div>
+                </div>
+                <div class="hero-section" style="padding: 40px 20px;">
+                    <h2 class="hero-title" style="font-size: 36px;">${currentLang === 'en' ? 'Projects by' : 'پروژه‌های'} ${user.name}</h2>
+                </div>
+                <div class="projects-grid">
+                    ${userProjects.map(project => {
+                        const languagesHTML = project.languages && project.languages.length > 0 
+                            ? `<div class="project-languages">
+                                ${project.languages.map(lang => `
+                                    <div class="language-section" style="background-image: url('${getLanguageImage(lang)}');"></div>
+                                `).join('')}
+                            </div>`
+                            : '<div class="project-image">📦</div>';
+                        
+                        return `
+                            <div class="project-card visible" onclick="showProjectDetail(${project.id})">
+                                <div class="project-image-container">
+                                    ${languagesHTML}
+                                </div>
+                                <div class="project-content">
+                                    <div class="project-header">
+                                        <div style="flex: 1;">
+                                            <div class="project-title">${project.title}</div>
+                                        </div>
+                                        <div class="project-type type-${project.type}">
+                                            ${getTypeName(project.type)}
+                                        </div>
+                                    </div>
+                                    <div class="project-description">${project.description}</div>
+                                    <div class="project-meta">
+                                        <div class="project-date">${formatDate(project.date)}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                <div class="detail-actions" style="margin-top: 40px;">
+                    <button class="btn-secondary" onclick="navigateHome()">
+                        <span>←</span>
+                        <span>${currentLang === 'en' ? 'Back to Projects' : 'بازگشت به پروژه‌ها'}</span>
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('user-page').innerHTML = userHTML;
+            document.getElementById('home-section').style.display = 'none';
+            document.getElementById('project-detail').classList.remove('active');
+            document.getElementById('user-page').classList.add('active');
+            document.getElementById('users-section').style.display = 'none';
+            document.getElementById('about-section').style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderUsersList() {
+            const grid = document.getElementById('usersGrid');
+            
+            grid.innerHTML = users.map(user => {
+                const userProjects = projects.filter(p => p.author === user.name);
+                const initials = user.name.split(' ').map(n => n[0]).join('');
+                
+                return `
+                    <div class="project-card visible" onclick="showUserPage('${user.name}')" style="cursor: pointer;">
+                        <div class="project-image-container" style="background: linear-gradient(135deg, var(--primary-blue), var(--primary-cyan)); display: flex; align-items: center; justify-content: center;">
+                            <div style="font-size: 80px; font-weight: bold; color: var(--white);">${initials}</div>
+                        </div>
+                        <div class="project-content">
+                            <div class="project-header">
+                                <div style="flex: 1;">
+                                    <div class="project-title">${user.name}</div>
+                                    <div class="project-author" style="color: var(--primary-cyan);">${userProjects.length} ${currentLang === 'en' ? 'Projects' : 'پروژه'}</div>
+                                </div>
+                            </div>
+                            <div class="project-description">${user.bio || ''}</div>
+                            <div class="project-meta">
+                                ${user.location ? `<div class="project-date">📍 ${user.location}</div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getTypeName(type) {
+            const types = {
+                web: currentLang === 'en' ? 'Web Dev' : 'وب',
+                mobile: currentLang === 'en' ? 'Mobile' : 'موبایل',
+                desktop: currentLang === 'en' ? 'Desktop' : 'دسکتاپ',
+                backend: currentLang === 'en' ? 'Backend' : 'بک‌اند',
+                ai: currentLang === 'en' ? 'AI/ML' : 'هوش مصنوعی',
+                other: currentLang === 'en' ? 'Other' : 'سایر'
+            };
+            return types[type] || types.other;
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            if (currentLang === 'fa') {
+                return date.toLocaleDateString('fa-IR');
+            }
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        let observer;
+
+        function setupScrollObserver() {
+            const options = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, options);
+        }
+
+        function setupScrollButton() {
+            const scrollBtn = document.querySelector('.scroll-top');
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    scrollBtn.classList.add('visible');
+                } else {
+                    scrollBtn.classList.remove('visible');
+                }
+            });
+        }
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        function generateAnimatedDots() {
+            const container = document.querySelector('.graph-container');
+            const dotsCount = 20;
+            
+            for (let i = 0; i < dotsCount; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'graph-dot';
+                dot.style.left = Math.random() * 100 + '%';
+                dot.style.top = Math.random() * 100 + '%';
+                dot.style.animationDelay = Math.random() * 10 + 's';
+                dot.style.animationDuration = (10 + Math.random() * 10) + 's';
+                container.appendChild(dot);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            init();
+            generateAnimatedDots();
+        });
+
+        setInterval(async () => {
+            try {
+                const response = await fetch('projects.json?t=' + new Date().getTime());
+                if (response.ok) {
+                    const newProjects = await response.json();
+                    if (JSON.stringify(newProjects) !== JSON.stringify(projects)) {
+                        projects = newProjects;
+                        if (document.getElementById('home-section').style.display !== 'none') {
+                            renderProjects();
+                        }
+                    }
+                }
+            } catch (error) {
+                console.log('Could not reload projects');
+            }
+        }, 300000);
+    </script>
 </body>
 </html>
