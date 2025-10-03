@@ -1,12 +1,22 @@
 [
-  {
-    "id": 1,
-    "title": "Your Project Name",
-    "description": "Full project description",
-    "type": "web",
-    "author": "Developer Name",
-    "date": "2025-03-15",
-    "languages": ["php", "javascript", "python"],
-    "github": "https://github.com/username/repo"
-  }
+              {
+                id: 1,
+                title: 'Uprix Assistant',
+                description: 'This software helps you organize, search, and run your installed programs quickly with a clean and animated UI.',
+                type: 'desktop',
+                author: 'Mehran Ghadirian',
+                date: '2025-03-15',
+                languages: ['csharp', 'cpp'],
+                github: 'https://github.com/MehranQadirian/Uprix-Application'
+            },
+            {
+                id: 2,
+                title: 'DWD Downloader Tools',
+                description: 'DWD is a powerful, feature-rich download manager for Linux, written in Python. It supports downloading regular files (e.g., MP3s) and YouTube videos with a sleek, colorful interface, advanced features, and unmatched flexibility. Whether you\'re downloading a single file or managing a queue of downloads, DWD has you covered!',
+                type: 'other',
+                author: 'Mehran Ghadirian',
+                date: '2025-02-20',
+                languages: ['python'],
+                github: 'https://github.com/MehranQadirian/dwd-download-manager'
+            }
 ]
