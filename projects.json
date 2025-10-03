@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "title": "Your Project Name",
+    "description": "Full project description",
+    "type": "web",
+    "author": "Developer Name",
+    "date": "2025-03-15",
+    "languages": ["php", "javascript", "python"],
+    "github": "https://github.com/username/repo"
+  }
+]
