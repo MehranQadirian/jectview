@@ -1,0 +1,18 @@
+[
+  {
+    "username": "mehranqadirian",
+    "name": "Mehran",
+    "bio": "Fullstack developer, loves clean UI and algorithms.",
+    "links": {
+      "github": "https://github.com/mehranqadirian"
+    }
+  },
+  {
+    "username": "naseridev",
+    "name": "Nima",
+    "bio": "Windows apps enthusiast and C# developer.",
+    "links": {
+      "github": "https://github.com/naseridev"
+    }
+  }
+]
