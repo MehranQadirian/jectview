@@ -1237,544 +1237,98 @@
     </footer>
 
     <script>
-const languageImages = {
-    'php': 'https://raw.githubusercontent.com/github/explore/main/topics/php/php.png',
-    'csharp': 'https://raw.githubusercontent.com/github/explore/main/topics/csharp/csharp.png',
-    'c#': 'https://raw.githubusercontent.com/github/explore/main/topics/csharp/csharp.png',
-    'python': 'https://raw.githubusercontent.com/github/explore/main/topics/python/python.png',
-    'javascript': 'https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png',
-    'java': 'https://raw.githubusercontent.com/github/explore/main/topics/java/java.png',
-    'cpp': 'https://raw.githubusercontent.com/github/explore/main/topics/cpp/cpp.png',
-    'c++': 'https://raw.githubusercontent.com/github/explore/main/topics/cpp/cpp.png',
-    'ruby': 'https://raw.githubusercontent.com/github/explore/main/topics/ruby/ruby.png',
-    'go': 'https://raw.githubusercontent.com/github/explore/main/topics/go/go.png',
-    'rust': 'https://raw.githubusercontent.com/github/explore/main/topics/rust/rust.png',
-    'typescript': 'https://raw.githubusercontent.com/github/explore/main/topics/typescript/typescript.png',
-    'html': 'https://raw.githubusercontent.com/github/explore/main/topics/html/html.png',
-    'css': 'https://raw.githubusercontent.com/github/explore/main/topics/css/css.png',
-    'swift': 'https://raw.githubusercontent.com/github/explore/main/topics/swift/swift.png',
-    'kotlin': 'https://raw.githubusercontent.com/github/explore/main/topics/kotlin/kotlin.png',
-    'dart': 'https://raw.githubusercontent.com/github/explore/main/topics/dart/dart.png'
-};
+let allProjects = [];
 
-let projects = [];
-let users = [];
-let currentLang = 'en';
-
-const TYPE_NORMALIZATION = {
-    'desktop app': 'desktop',
-    'desktop': 'desktop',
-    'web app': 'web',
-    'web': 'web',
-    'mobile app': 'mobile',
-    'mobile': 'mobile',
-    'backend': 'backend',
-    'ai/ml': 'ai',
-    'ai': 'ai',
-    'tool': 'tool',
-    'other': 'other'
-};
-
-async function init() {
-    try {
-        const response = await fetch('https://proud-pine-b58c.mehranghadirian01.workers.dev/');
-        
-        if (response.ok) {
-            const workerData = await response.json();
-            
-            projects = workerData.map((item, index) => {
-                const normalizedType = TYPE_NORMALIZATION[item.type?.toLowerCase()] || 'other';
-                
-                return {
-                    id: index + 1,
-                    title: item.project_name || 'Untitled Project',
-                    description: item.description || 'No description available',
-                    type: normalizedType,
-                    author: item.developer_name || 'Unknown',
-                    date: item.project_date || new Date().toISOString(),
-                    languages: Array.isArray(item.languages) ? item.languages.map(l => l.toLowerCase()) : [],
-                    github: item.github_link || '#'
-                };
-            });
-            
-            const uniqueUsersMap = new Map();
-            projects.forEach(project => {
-                if (!uniqueUsersMap.has(project.author)) {
-                    uniqueUsersMap.set(project.author, {
-                        name: project.author,
-                        bio: `Developer with ${projects.filter(p => p.author === project.author).length} projects`,
-                        github: `https://github.com/${project.author.toLowerCase().replace(/\s+/g, '')}`,
-                        email: '',
-                        location: 'Iran'
-                    });
+        async function fetchProjects() {
+            try {
+                const response = await fetch('https://proud-pine-b58c.mehranghadirian01.workers.dev/', {
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!response.ok) throw new Error(`HTTP error: ${response.status} - ${await response.text()}`);
+                allProjects = await response.json();
+                if (allProjects.length === 0) {
+                    document.querySelector('#projects-container').innerHTML = '<p>No projects available yet. Please check back later.</p>';
+                    document.querySelector('#developers-container').innerHTML = '<p>No developers available yet.</p>';
+                    return;
                 }
-            });
-            users = Array.from(uniqueUsersMap.values());
-            
-            console.log(`Loaded ${projects.length} projects from worker`);
-        } else {
-            console.error('Failed to fetch from worker:', response.status);
-            projects = [];
-            users = [];
-        }
-    } catch (error) {
-        console.error('Error fetching data from worker:', error);
-        projects = [];
-        users = [];
-    }
-
-    populateUserFilter();
-    renderProjects();
-    setupScrollObserver();
-    setupScrollButton();
-}
-
-function toggleTheme() {
-    const body = document.body;
-    const toggle = document.querySelector('.toggle-switch');
-    
-    if (body.classList.contains('dark-theme')) {
-        body.classList.remove('dark-theme');
-        body.classList.add('light-theme');
-        toggle.classList.remove('active');
-    } else {
-        body.classList.remove('light-theme');
-        body.classList.add('dark-theme');
-        toggle.classList.add('active');
-    }
-}
-
-function toggleLanguage() {
-    currentLang = currentLang === 'en' ? 'fa' : 'en';
-    document.body.dir = currentLang === 'fa' ? 'rtl' : 'ltr';
-    document.getElementById('langText').textContent = currentLang === 'en' ? 'فارسی' : 'English';
-    
-    document.querySelectorAll('[data-en]').forEach(el => {
-        if (el.tagName === 'INPUT') {
-            el.placeholder = el.getAttribute('data-placeholder-' + currentLang);
-        } else if (el.tagName === 'OPTION') {
-            el.textContent = el.getAttribute('data-' + currentLang);
-        } else {
-            el.textContent = el.getAttribute('data-' + currentLang);
-        }
-    });
-
-    renderProjects();
-    
-    const activePage = document.querySelector('#user-page.active');
-    if (activePage) {
-        const userName = activePage.querySelector('.user-name').textContent;
-        showUserPage(userName);
-    }
-}
-
-function toggleMobileMenu() {
-    document.querySelector('.hamburger').classList.toggle('active');
-    document.querySelector('.mobile-sidebar').classList.toggle('active');
-}
-
-function navigateHome() {
-    document.getElementById('home-section').style.display = 'block';
-    document.getElementById('project-detail').classList.remove('active');
-    document.getElementById('user-page').classList.remove('active');
-    document.getElementById('users-section').style.display = 'none';
-    document.getElementById('about-section').style.display = 'none';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function showUsersPage() {
-    document.getElementById('home-section').style.display = 'none';
-    document.getElementById('project-detail').classList.remove('active');
-    document.getElementById('user-page').classList.remove('active');
-    document.getElementById('users-section').style.display = 'block';
-    document.getElementById('about-section').style.display = 'none';
-    renderUsersList();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function showAboutPage() {
-    document.getElementById('home-section').style.display = 'none';
-    document.getElementById('project-detail').classList.remove('active');
-    document.getElementById('user-page').classList.remove('active');
-    document.getElementById('users-section').style.display = 'none';
-    document.getElementById('about-section').style.display = 'block';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function populateUserFilter() {
-    const userFilter = document.getElementById('userFilter');
-    const uniqueUsers = [...new Set(projects.map(p => p.author))];
-    
-    const allOption = document.createElement('option');
-    allOption.value = '';
-    allOption.setAttribute('data-en', 'All Developers');
-    allOption.setAttribute('data-fa', 'همه توسعه‌دهندگان');
-    allOption.textContent = currentLang === 'en' ? 'All Developers' : 'همه توسعه‌دهندگان';
-    
-    userFilter.innerHTML = '';
-    userFilter.appendChild(allOption);
-    
-    uniqueUsers.forEach(user => {
-        const option = document.createElement('option');
-        option.value = user;
-        option.textContent = user;
-        userFilter.appendChild(option);
-    });
-}
-
-function getLanguageImage(lang) {
-    return languageImages[lang.toLowerCase()] || languageImages['html'];
-}
-
-function renderProjects() {
-    const grid = document.getElementById('projectsGrid');
-    const filtered = getFilteredProjects();
-    
-    if (filtered.length === 0) {
-        grid.innerHTML = `<div class="no-projects">${currentLang === 'en' ? 'No projects found' : 'پروژه‌ای یافت نشد'}</div>`;
-        return;
-    }
-    
-    grid.innerHTML = filtered.map(project => {
-        const languagesHTML = project.languages && project.languages.length > 0 
-            ? `<div class="project-languages">
-                ${project.languages.map(lang => `
-                    <div class="language-section" style="background-image: url('${getLanguageImage(lang)}');"></div>
-                `).join('')}
-            </div>`
-            : '<div class="project-image">📦</div>';
-        
-        return `
-            <div class="project-card" onclick="showProjectDetail(${project.id})">
-                <div class="project-image-container">
-                    ${languagesHTML}
-                </div>
-                <div class="project-content">
-                    <div class="project-header">
-                        <div style="flex: 1;">
-                            <div class="project-title">${project.title}</div>
-                            <div class="project-author" onclick="event.stopPropagation(); showUserPage('${project.author}')">${project.author}</div>
-                        </div>
-                        <div class="project-type type-${project.type}">
-                            ${getTypeName(project.type)}
-                        </div>
-                    </div>
-                    <div class="project-description">${project.description}</div>
-                    <div class="project-meta">
-                        <div class="project-date">${formatDate(project.date)}</div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
-
-    setTimeout(() => {
-        document.querySelectorAll('.project-card').forEach(card => {
-            observer.observe(card);
-        });
-    }, 100);
-}
-
-function getFilteredProjects() {
-    const search = document.getElementById('searchInput').value.toLowerCase();
-    const type = document.getElementById('typeFilter').value;
-    const user = document.getElementById('userFilter').value;
-    const sort = document.getElementById('sortFilter').value;
-    
-    let filtered = projects.filter(p => {
-        const matchSearch = p.title.toLowerCase().includes(search) || 
-                          p.description.toLowerCase().includes(search);
-        const matchType = !type || p.type === type;
-        const matchUser = !user || p.author === user;
-        return matchSearch && matchType && matchUser;
-    });
-    
-    filtered.sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
-        return sort === 'newest' ? dateB - dateA : dateA - dateB;
-    });
-    
-    return filtered;
-}
-
-function filterProjects() {
-    renderProjects();
-}
-
-function showProjectDetail(projectId) {
-    const project = projects.find(p => p.id === projectId);
-    if (!project) return;
-    
-    const languagesHTML = project.languages && project.languages.length > 0 
-        ? `<div class="project-languages">
-            ${project.languages.map(lang => `
-                <div class="language-section" style="background-image: url('${getLanguageImage(lang)}');"></div>
-            `).join('')}
-        </div>`
-        : '<div style="background: linear-gradient(135deg, var(--primary-blue), var(--primary-cyan)); width: 100%; height: 100%;"></div>';
-    
-    const detailHTML = `
-        <div class="detail-header">
-            ${languagesHTML}
-            <div class="detail-header-overlay">
-                <div class="detail-title">${project.title}</div>
-                <div class="project-type type-${project.type}" style="display: inline-block;">
-                    ${getTypeName(project.type)}
-                </div>
-            </div>
-        </div>
-        <div class="detail-body">
-            <div class="detail-meta">
-                <div class="meta-item">
-                    <div class="meta-label">${currentLang === 'en' ? 'Author' : 'نویسنده'}</div>
-                    <div class="meta-value" style="cursor: pointer;" onclick="showUserPage('${project.author}')">${project.author}</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">${currentLang === 'en' ? 'Date' : 'تاریخ'}</div>
-                    <div class="meta-value">${formatDate(project.date)}</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">${currentLang === 'en' ? 'Type' : 'نوع'}</div>
-                    <div class="meta-value">${getTypeName(project.type)}</div>
-                </div>
-            </div>
-            <div class="detail-description">
-                ${project.description}
-            </div>
-            ${project.languages ? `
-                <div class="detail-meta">
-                    <div class="meta-item" style="flex: none; width: 100%;">
-                        <div class="meta-label">${currentLang === 'en' ? 'Technologies' : 'تکنولوژی‌ها'}</div>
-                        <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
-                            ${project.languages.map(lang => `
-                                <span style="background: var(--primary-cyan); color: var(--white); padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: bold;">
-                                    ${lang.toUpperCase()}
-                                </span>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            ` : ''}
-            <div class="detail-actions">
-                <a href="${project.github || '#'}" target="_blank" class="btn-primary">
-                    <span>🚀</span>
-                    <span>${currentLang === 'en' ? 'View on GitHub' : 'مشاهده در گیت‌هاب'}</span>
-                </a>
-                <button class="btn-secondary" onclick="navigateHome()">
-                    <span>←</span>
-                    <span>${currentLang === 'en' ? 'Back to Projects' : 'بازگشت به پروژه‌ها'}</span>
-                </button>
-            </div>
-        </div>
-    `;
-    
-    document.getElementById('project-detail').innerHTML = detailHTML;
-    document.getElementById('home-section').style.display = 'none';
-    document.getElementById('project-detail').classList.add('active');
-    document.getElementById('user-page').classList.remove('active');
-    document.getElementById('users-section').style.display = 'none';
-    document.getElementById('about-section').style.display = 'none';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function showUserPage(userName) {
-    const user = users.find(u => u.name === userName);
-    if (!user) return;
-    
-    const userProjects = projects.filter(p => p.author === userName);
-    const initials = userName.split(' ').map(n => n[0]).join('');
-    
-    const userHTML = `
-        <div class="user-header">
-            <div class="user-avatar">${initials}</div>
-            <h1 class="user-name">${user.name}</h1>
-            <p class="user-bio">${user.bio || ''}</p>
-            <div class="user-stats">
-                <div class="stat-item">
-                    <div class="stat-value">${userProjects.length}</div>
-                    <div class="stat-label">${currentLang === 'en' ? 'Projects' : 'پروژه'}</div>
-                </div>
-                ${user.location ? `
-                    <div class="stat-item">
-                        <div class="stat-value">📍</div>
-                        <div class="stat-label">${user.location}</div>
-                    </div>
-                ` : ''}
-            </div>
-            <div class="user-social">
-                ${user.github ? `<a href="${user.github}" target="_blank" class="social-link" title="GitHub">💻</a>` : ''}
-                ${user.email ? `<a href="${user.email}" class="social-link" title="Email">📧</a>` : ''}
-            </div>
-        </div>
-        <div class="hero-section" style="padding: 40px 20px;">
-            <h2 class="hero-title" style="font-size: 36px;">${currentLang === 'en' ? 'Projects by' : 'پروژه‌های'} ${user.name}</h2>
-        </div>
-        <div class="projects-grid">
-            ${userProjects.map(project => {
-                const languagesHTML = project.languages && project.languages.length > 0 
-                    ? `<div class="project-languages">
-                        ${project.languages.map(lang => `
-                            <div class="language-section" style="background-image: url('${getLanguageImage(lang)}');"></div>
-                        `).join('')}
-                    </div>`
-                    : '<div class="project-image">📦</div>';
-                
-                return `
-                    <div class="project-card visible" onclick="showProjectDetail(${project.id})">
-                        <div class="project-image-container">
-                            ${languagesHTML}
-                        </div>
-                        <div class="project-content">
-                            <div class="project-header">
-                                <div style="flex: 1;">
-                                    <div class="project-title">${project.title}</div>
-                                </div>
-                                <div class="project-type type-${project.type}">
-                                    ${getTypeName(project.type)}
-                                </div>
-                            </div>
-                            <div class="project-description">${project.description}</div>
-                            <div class="project-meta">
-                                <div class="project-date">${formatDate(project.date)}</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('')}
-        </div>
-        <div class="detail-actions" style="margin-top: 40px;">
-            <button class="btn-secondary" onclick="navigateHome()">
-                <span>←</span>
-                <span>${currentLang === 'en' ? 'Back to Projects' : 'بازگشت به پروژه‌ها'}</span>
-            </button>
-        </div>
-    `;
-    
-    document.getElementById('user-page').innerHTML = userHTML;
-    document.getElementById('home-section').style.display = 'none';
-    document.getElementById('project-detail').classList.remove('active');
-    document.getElementById('user-page').classList.add('active');
-    document.getElementById('users-section').style.display = 'none';
-    document.getElementById('about-section').style.display = 'none';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function renderUsersList() {
-    const grid = document.getElementById('usersGrid');
-    
-    grid.innerHTML = users.map(user => {
-        const userProjects = projects.filter(p => p.author === user.name);
-        const initials = user.name.split(' ').map(n => n[0]).join('');
-        
-        return `
-            <div class="project-card visible" onclick="showUserPage('${user.name}')" style="cursor: pointer;">
-                <div class="project-image-container" style="background: linear-gradient(135deg, var(--primary-blue), var(--primary-cyan)); display: flex; align-items: center; justify-content: center;">
-                    <div style="font-size: 80px; font-weight: bold; color: var(--white);">${initials}</div>
-                </div>
-                <div class="project-content">
-                    <div class="project-header">
-                        <div style="flex: 1;">
-                            <div class="project-title">${user.name}</div>
-                            <div class="project-author" style="color: var(--primary-cyan);">${userProjects.length} ${currentLang === 'en' ? 'Projects' : 'پروژه'}</div>
-                        </div>
-                    </div>
-                    <div class="project-description">${user.bio || ''}</div>
-                    <div class="project-meta">
-                        ${user.location ? `<div class="project-date">📍 ${user.location}</div>` : ''}
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function getTypeName(type) {
-    const types = {
-        web: currentLang === 'en' ? 'Web Dev' : 'وب',
-        mobile: currentLang === 'en' ? 'Mobile' : 'موبایل',
-        desktop: currentLang === 'en' ? 'Desktop' : 'دسکتاپ',
-        backend: currentLang === 'en' ? 'Backend' : 'بک‌اند',
-        ai: currentLang === 'en' ? 'AI/ML' : 'هوش مصنوعی',
-        tool: currentLang === 'en' ? 'Tool' : 'ابزار',
-        other: currentLang === 'en' ? 'Other' : 'سایر'
-    };
-    return types[type] || types.other;
-}
-
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    if (currentLang === 'fa') {
-        return date.toLocaleDateString('fa-IR');
-    }
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-}
-
-let observer;
-
-function setupScrollObserver() {
-    const options = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
+                renderProjects(allProjects);
+                renderDevelopers(allProjects);
+                populateDeveloperFilter(allProjects);
+            } catch (error) {
+                console.error('Error fetching projects:', error);
+                document.querySelector('#projects-container').innerHTML = '<p>Error loading projects: ' + error.message + '</p>';
+                document.querySelector('#developers-container').innerHTML = '<p>Error loading developers.</p>';
             }
-        });
-    }, options);
-}
-
-function setupScrollButton() {
-    const scrollBtn = document.querySelector('.scroll-top');
-    
-    window.addEventListener('scroll', () => {
-        if (window.pageYOffset > 300) {
-            scrollBtn.classList.add('visible');
-        } else {
-            scrollBtn.classList.remove('visible');
         }
-    });
-}
 
-function scrollToTop() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-}
+        function renderProjects(projects) {
+            const projectsContainer = document.querySelector('#projects-container');
+            if (!projectsContainer) return;
 
-function generateAnimatedDots() {
-    const container = document.querySelector('.graph-container');
-    const dotsCount = 20;
-    
-    for (let i = 0; i < dotsCount; i++) {
-        const dot = document.createElement('div');
-        dot.className = 'graph-dot';
-        dot.style.left = Math.random() * 100 + '%';
-        dot.style.top = Math.random() * 100 + '%';
-        dot.style.animationDelay = Math.random() * 10 + 's';
-        dot.style.animationDuration = (10 + Math.random() * 10) + 's';
-        container.appendChild(dot);
-    }
-}
+            projectsContainer.innerHTML = projects.length > 0 ? projects.map(project => `
+                <div class="project-card">
+                    <h3>${project.project_name}</h3>
+                    <p>By: ${project.developer_name}</p>
+                    <p>Date: ${project.project_date ? new Date(project.project_date).toLocaleDateString() : 'Unknown'}</p>
+                    <p>Languages: ${project.languages.length > 0 ? project.languages.join(', ') : 'None'}</p>
+                    <p>Type: ${project.type}</p>
+                    <p>${project.description}</p>
+                    <a href="${project.github_link}" target="_blank">View on GitHub</a>
+                </div>
+            `).join('') : '<p>No projects found.</p>';
+        }
 
-window.addEventListener('DOMContentLoaded', () => {
-    init();
-    generateAnimatedDots();
-});
+        function renderDevelopers(projects) {
+            const developersContainer = document.querySelector('#developers-container');
+            if (!developersContainer) return;
 
-setInterval(async () => {
-    try {
-        await init();
-        console.log('Projects refreshed');
-    } catch (error) {
-        console.log('Could not refresh projects');
-    }
-}, 300000);
+            const developers = [...new Set(projects.map(p => p.developer_name))];
+            developersContainer.innerHTML = developers.length > 0 ? developers.map(dev => `
+                <div class="developer-card">
+                    <h3>${dev}</h3>
+                    <a href="https://github.com/${dev}" target="_blank">GitHub Profile</a>
+                </div>
+            `).join('') : '<p>No developers found.</p>';
+        }
+
+        function populateDeveloperFilter(projects) {
+            const developerFilter = document.querySelector('#developer-filter');
+            if (!developerFilter) return;
+
+            const developers = [...new Set(projects.map(p => p.developer_name))];
+            developerFilter.innerHTML = '<option value="all">All Developers</option>' + 
+                developers.map(dev => `<option value="${dev}">${dev}</option>`).join('');
+        }
+
+        function applyFilters() {
+            const typeFilter = document.querySelector('#type-filter').value;
+            const developerFilter = document.querySelector('#developer-filter').value;
+            const sortFilter = document.querySelector('#sort-filter').value;
+
+            let filteredProjects = [...allProjects];
+
+            if (typeFilter !== 'all') {
+                filteredProjects = filteredProjects.filter(project => project.type === typeFilter);
+            }
+
+            if (developerFilter !== 'all') {
+                filteredProjects = filteredProjects.filter(project => project.developer_name === developerFilter);
+            }
+
+            filteredProjects.sort((a, b) => {
+                const dateA = a.project_date ? new Date(a.project_date) : new Date(0);
+                const dateB = b.project_date ? new Date(b.project_date) : new Date(0);
+                return sortFilter === 'newest' ? dateB - dateA : dateA - dateB;
+            });
+
+            renderProjects(filteredProjects);
+        }
+
+        document.querySelector('#type-filter')?.addEventListener('change', applyFilters);
+        document.querySelector('#developer-filter')?.addEventListener('change', applyFilters);
+        document.querySelector('#sort-filter')?.addEventListener('change', applyFilters);
+
+        window.addEventListener('load', fetchProjects);
     </script>
 </body>
 </html>
