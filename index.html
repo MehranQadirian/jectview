@@ -1237,10 +1237,6 @@
     </footer>
 
     <script>
-        // Replace the entire <script> section in your index.html with this:
-
-// Replace the entire <script> section in your index.html with this:
-
 const languageImages = {
     'php': 'https://raw.githubusercontent.com/github/explore/main/topics/php/php.png',
     'csharp': 'https://raw.githubusercontent.com/github/explore/main/topics/csharp/csharp.png',
@@ -1265,7 +1261,6 @@ let projects = [];
 let users = [];
 let currentLang = 'en';
 
-// Type mapping to normalize different type formats
 const TYPE_NORMALIZATION = {
     'desktop app': 'desktop',
     'desktop': 'desktop',
@@ -1282,15 +1277,12 @@ const TYPE_NORMALIZATION = {
 
 async function init() {
     try {
-        // Fetch from Cloudflare Worker
         const response = await fetch('https://proud-pine-b58c.mehranghadirian01.workers.dev/');
         
         if (response.ok) {
             const workerData = await response.json();
             
-            // Transform worker data to match expected format
             projects = workerData.map((item, index) => {
-                // Normalize type
                 const normalizedType = TYPE_NORMALIZATION[item.type?.toLowerCase()] || 'other';
                 
                 return {
@@ -1305,7 +1297,6 @@ async function init() {
                 };
             });
             
-            // Extract unique users from projects
             const uniqueUsersMap = new Map();
             projects.forEach(project => {
                 if (!uniqueUsersMap.has(project.author)) {
@@ -1776,7 +1767,6 @@ window.addEventListener('DOMContentLoaded', () => {
     generateAnimatedDots();
 });
 
-// Auto-refresh every 5 minutes to get latest data
 setInterval(async () => {
     try {
         await init();
