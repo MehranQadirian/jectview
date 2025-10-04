@@ -1281,7 +1281,7 @@ const TYPE_NORMALIZATION = {
 async function init() {
     try {
         // Fetch from Cloudflare Worker
-        const response = await fetch('/api/projects');
+        const response = await fetch('https://proud-pine-b58c.mehranghadirian01.workers.dev/');
         
         if (response.ok) {
             const workerData = await response.json();
